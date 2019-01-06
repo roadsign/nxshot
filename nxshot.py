@@ -34,7 +34,7 @@ parser.add_argument('-l',
     help='Treat FILEPATH as a single folder of captures, instead of "Nintendo/Album/" structure')
 
 parser.add_argument('-s',
-    '--supress-regions',
+    '--strip-regions',
     action='store_true',
     help='Don\'t include game region in the folder\'s name')
 
@@ -115,7 +115,7 @@ def updateGameIDs():
 
 def checkID(gameid, idname):
     if gameid in idname:
-        if args.supress_regions:
+        if args.strip_regions:
             return re.sub(r' \((CHN|EUR|JPN|KOR|USA| )*\)$', '', idname[gameid])
         return idname[gameid]
     else:
