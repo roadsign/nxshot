@@ -6,12 +6,9 @@ import re
 from pathlib import Path
 from datetime import datetime
 from shutil import copy
-from Crypto.Cipher import AES
-from Crypto.Util import Padding
 import hashlib
 from urllib.request import urlopen
 from urllib.error import URLError
-from bs4 import BeautifulSoup
 
 keyhash = "24e0dc62a15c11d38b622162ea2b4383"
 updated = 0
@@ -37,6 +34,11 @@ parser.add_argument('-s',
     '--strip-regions',
     action='store_true',
     help='Don\'t include game region in the folder\'s name')
+
+parser.add_argument('-a',
+    '--auto-update',
+    action='store_true',
+    help='Automatically update game list from SwitchBrew')
 
 parser.add_argument('-o',
     '--output',
@@ -64,6 +66,10 @@ def loadKey(filename, keyhash):
 
 
 def updateGameIDs():
+    from Crypto.Cipher import AES
+    from Crypto.Util import Padding
+    from bs4 import BeautifulSoup
+
     key = loadKey('key.txt', keyhash)
     if not key:
         return -1
@@ -171,23 +177,18 @@ def checkFolders(filelist):
         print('Organized {} of {} files.'.format(current, length))
 
 
+# Fetch from SwitchBrew 
+if args.auto_update:
+    updateGameIDs()
+
 # Load game ids and their names from external file
 try:
     with open('gameids.json', 'r', encoding='utf-8') as idfile:
             idname = json.load(idfile)
 except FileNotFoundError:
-    print('Game ID list (gameids.json) not found! Fetching from Switchbrew...')
-    updated = updateGameIDs()
-    if updated < 0:
-        sys.exit()
+    print('Game ID list (gameids.json) not found!')
 except json.decoder.JSONDecodeError:
-    print('Invalid JSON format! Fetching from Switchbrew...')
-    updated = updateGameIDs()
-    if updated < 0:
-        sys.exit()
-
-if not updated:
-    updateGameIDs()
+    print('Invalid JSON format!')
 
 albumfolder = args.filepath
 
