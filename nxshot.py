@@ -44,7 +44,7 @@ parser.add_argument('-o',
     '--output',
     metavar='outputfolder',
     type=Path,
-    help='Path where "Organized" captures should be copied to. By default, output files to FILEPATH')
+    help='Path where organized captures should be put. By default, output files to FILEPATH')
 
 
 # If there are arguments, parse them. If not, exit
@@ -164,7 +164,7 @@ def checkFolders(filelist):
         if args.output is None:
             outputfolder = args.filepath.joinpath('Organized', checkID(gameid,idname))
         else:
-            outputfolder = args.output.joinpath('Organized', checkID(gameid,idname))
+            outputfolder = args.output.joinpath(checkID(gameid,idname))
 
         outputfolder.mkdir(parents=True, exist_ok=True)
 
